@@ -2,27 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>phantomDB</title>
+<title>PhantomDB</title>
 </head>
 
 <body>
 
-<h1>データテスト</h1>
-
-<div id="out"></div>
-
-<script>
-
-fetch("https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1")
-.then(r=>r.json())
-.then(d=>{
- document.getElementById("out").innerText = JSON.stringify(d[0])
-})
-.catch(e=>{
- document.getElementById("out").innerText = "エラー："+e
-})
-
-</script>
+<h1>PhantomDB 起動成功</h1>
 
 </body>
 </html>
