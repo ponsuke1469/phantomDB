@@ -9,21 +9,21 @@
 <style>
 
 body{
-font-family: Arial, sans-serif;
-background:#f5f6fa;
+font-family:sans-serif;
+background:#f2f3f7;
 margin:0;
 }
 
 header{
-background:#2c3e50;
+background:#1e2a38;
 color:white;
 padding:15px;
-font-size:20px;
+font-size:22px;
 text-align:center;
 }
 
 .container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
 padding:20px;
 }
@@ -33,7 +33,7 @@ width:100%;
 padding:12px;
 font-size:16px;
 margin-bottom:15px;
-border-radius:6px;
+border-radius:8px;
 border:1px solid #ccc;
 }
 
@@ -46,37 +46,51 @@ margin:4px;
 padding:8px 14px;
 border:none;
 border-radius:6px;
-background:#ddd;
+background:#e1e4ea;
 cursor:pointer;
 }
 
 .filters button.active{
-background:#3498db;
+background:#2f80ed;
 color:white;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+gap:14px;
 }
 
 .card{
 background:white;
 border-radius:10px;
-padding:15px;
-margin-bottom:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
+padding:12px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+display:flex;
+gap:10px;
+}
+
+.card img{
+width:70px;
+height:70px;
+object-fit:cover;
+border-radius:8px;
 }
 
 .name{
 font-weight:bold;
-font-size:18px;
-margin-bottom:6px;
+font-size:16px;
 }
 
 .skill{
-color:#333;
-margin-bottom:4px;
+font-size:14px;
+margin-top:4px;
 }
 
 .meta{
-font-size:13px;
+font-size:12px;
 color:#666;
+margin-top:2px;
 }
 
 </style>
@@ -95,16 +109,16 @@ color:#666;
 <div class="filters">
 
 属性  
-<button onclick="filterAttr('火')">火</button>
-<button onclick="filterAttr('水')">水</button>
-<button onclick="filterAttr('風')">風</button>
-<button onclick="filterAttr('光')">光</button>
-<button onclick="filterAttr('闇')">闇</button>
-<button onclick="filterAttr('')">すべて</button>
+<button onclick="setAttr('火')">火</button>
+<button onclick="setAttr('水')">水</button>
+<button onclick="setAttr('風')">風</button>
+<button onclick="setAttr('光')">光</button>
+<button onclick="setAttr('闇')">闇</button>
+<button onclick="setAttr('')">すべて</button>
 
 </div>
 
-<div id="results"></div>
+<div class="grid" id="results"></div>
 
 </div>
 
@@ -113,7 +127,7 @@ color:#666;
 const API="https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1"
 
 let DATA=[]
-let CURRENT_ATTR=""
+let ATTR=""
 
 fetch(API)
 .then(r=>r.json())
@@ -133,10 +147,21 @@ const el=document.createElement("div")
 el.className="card"
 
 el.innerHTML=`
+
+<img src="${c.画像 || 'https://placehold.co/80'}">
+
+<div>
+
 <div class="name">${c.キャラ名 || ""}</div>
+
 <div class="skill">${c.リンクスキル || ""}</div>
+
 <div class="meta">${c.条件 || ""}</div>
+
 <div class="meta">${c.効果 || ""}</div>
+
+</div>
+
 `
 
 box.appendChild(el)
@@ -145,38 +170,46 @@ box.appendChild(el)
 
 }
 
-function filterAttr(attr){
+function setAttr(attr){
 
-CURRENT_ATTR=attr
+ATTR=attr
 
-let list=DATA
-
-if(attr){
-list=list.filter(x=>x.属性==attr)
-}
-
-render(list)
+apply()
 
 }
 
-document.getElementById("search").addEventListener("input",e=>{
+function apply(){
 
-let word=e.target.value
+let word=document.getElementById("search").value
 
-let list=DATA.filter(x=>
+let list=DATA.filter(x=>{
+
+let ok=true
+
+if(word){
+
+ok =
 
 (x.キャラ名 && x.キャラ名.includes(word)) ||
 (x.リンクスキル && x.リンクスキル.includes(word))
 
-)
-
-if(CURRENT_ATTR){
-list=list.filter(x=>x.属性==CURRENT_ATTR)
 }
+
+if(ATTR){
+
+ok = ok && x.属性==ATTR
+
+}
+
+return ok
+
+})
 
 render(list)
 
-})
+}
+
+document.getElementById("search").addEventListener("input",apply)
 
 </script>
 
