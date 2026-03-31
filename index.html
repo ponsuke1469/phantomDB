@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ファンキルリンクスキル検索</title>
+
+<style>
+body{
+font-family:sans-serif;
+background:#f4f4f4;
+padding:40px;
+}
+
+.search{
+width:100%;
+padding:10px;
+font-size:16px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:6px;
+box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>ファンキルリンクスキル検索</h1>
+
+<input
+class="search"
+id="search"
+placeholder="ユニット・スキル検索"
+/>
+
+<div id="results"></div>
+
+<script>
+
+const url="https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1"
+
+let data=[]
+
+fetch(url)
+.then(r=>r.json())
+.then(json=>{
+data=json
+render(data)
+})
+
+function render(list){
+
+const box=document.getElementById("results")
+box.innerHTML=""
+
+list.forEach(i=>{
+
+box.innerHTML+=`
+<div class="card">
+<b>${i.ユニット}</b><br>
+${i.リンクスキル}
+</div>
+`
+
+})
+
+}
+
+document.getElementById("search").addEventListener("input",e=>{
+
+const q=e.target.value.toLowerCase()
+
+const filtered=data.filter(i=>
+JSON.stringify(i).toLowerCase().includes(q)
+)
+
+render(filtered)
+
+})
+
+</script>
+
+</body>
+</html>
