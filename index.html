@@ -1,57 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <title>ファンキルリンクスキル検索</title>
 
 <style>
+
 body{
 font-family:sans-serif;
-background:#f4f4f4;
-padding:40px;
+background:#f5f5f5;
+margin:0;
 }
 
-.search{
+header{
+background:#2c3e50;
+color:white;
+padding:15px;
+font-size:20px;
+}
+
+.container{
+padding:20px;
+max-width:900px;
+margin:auto;
+}
+
+input{
 width:100%;
 padding:10px;
 font-size:16px;
-margin-bottom:20px;
+margin-bottom:15px;
+}
+
+.filters button{
+margin:5px;
+padding:8px 12px;
+border:none;
+background:#ddd;
+cursor:pointer;
+}
+
+.filters button.active{
+background:#3498db;
+color:white;
 }
 
 .card{
 background:white;
+border-radius:10px;
 padding:15px;
 margin-bottom:10px;
-border-radius:6px;
-box-shadow:0 2px 4px rgba(0,0,0,0.1);
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-</style>
 
+.name{
+font-weight:bold;
+font-size:18px;
+}
+
+.skill{
+color:#444;
+margin-top:5px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>ファンキルリンクスキル検索</h1>
+<header>
+ファンキルリンクスキル検索
+</header>
 
-<input
-class="search"
-id="search"
-placeholder="ユニット・スキル検索"
-/>
+<div class="container">
+
+<input id="search" placeholder="キャラ名・スキル検索">
+
+<div class="filters">
+属性:
+<button onclick="filter('火')">火</button>
+<button onclick="filter('水')">水</button>
+<button onclick="filter('風')">風</button>
+<button onclick="filter('光')">光</button>
+<button onclick="filter('闇')">闇</button>
+<button onclick="filter('')">全て</button>
+</div>
 
 <div id="results"></div>
 
+</div>
+
 <script>
 
-const url="https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1"
+const API="https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1"
 
-let data=[]
+let DATA=[]
+let CURRENT=""
 
-fetch(url)
+fetch(API)
 .then(r=>r.json())
-.then(json=>{
-data=json
-render(data)
+.then(data=>{
+DATA=data
+render(DATA)
 })
 
 function render(list){
@@ -59,28 +109,52 @@ function render(list){
 const box=document.getElementById("results")
 box.innerHTML=""
 
-list.forEach(i=>{
+list.forEach(c=>{
 
-box.innerHTML+=`
-<div class="card">
-<b>${i.ユニット}</b><br>
-${i.リンクスキル}
-</div>
+const el=document.createElement("div")
+el.className="card"
+
+el.innerHTML=`
+<div class="name">${c.キャラ名}</div>
+<div class="skill">${c.リンクスキル}</div>
+<div>${c.条件}</div>
+<div>${c.効果}</div>
 `
+
+box.appendChild(el)
 
 })
 
 }
 
+function filter(attr){
+
+CURRENT=attr
+
+let list=DATA
+
+if(attr){
+list=list.filter(x=>x.属性==attr)
+}
+
+render(list)
+
+}
+
 document.getElementById("search").addEventListener("input",e=>{
 
-const q=e.target.value.toLowerCase()
+let word=e.target.value
 
-const filtered=data.filter(i=>
-JSON.stringify(i).toLowerCase().includes(q)
+let list=DATA.filter(x=>
+x.キャラ名.includes(word) ||
+x.リンクスキル.includes(word)
 )
 
-render(filtered)
+if(CURRENT){
+list=list.filter(x=>x.属性==CURRENT)
+}
+
+render(list)
 
 })
 
