@@ -21,18 +21,30 @@ function setAttr(a){
 
 function draw(){
 
- const word=document.getElementById("search").value
+ const word=document.getElementById("search").value || ""
 
  const list=DATA.filter(d=>{
 
+  const name=d.名前 || ""
+  const link=d.リンクスキル || ""
+  const link2=d.リンクスキル2 || ""
+  const pas=d.パッシブスキル || ""
+  const pas2=d.パッシブスキル2 || ""
+  const act=d.アクティブスキル || ""
+  const act2=d.アクティブスキル2 || ""
+  const attr=d.属性 || ""
+
   const matchWord =
-   d.名前.includes(word) ||
-   d.リンクスキル.includes(word) ||
-   d.パッシブスキル.includes(word) ||
-   d.アクティブスキル.includes(word)
+   name.includes(word) ||
+   link.includes(word) ||
+   link2.includes(word) ||
+   pas.includes(word) ||
+   pas2.includes(word) ||
+   act.includes(word) ||
+   act2.includes(word)
 
   const matchAttr =
-   !ATTR || d.属性.includes(ATTR)
+   !ATTR || attr.includes(ATTR)
 
   return matchWord && matchAttr
 
@@ -47,23 +59,23 @@ function draw(){
 
   <div class="card">
 
-   <img src="${d.アイコンURL}" class="icon">
+   <img src="${d.アイコンURL || ""}" style="width:80px">
 
    <h3>${d.名前}</h3>
 
-   <div class="attr">${d.属性}</div>
+   <div>${d.属性}</div>
 
    <b>リンクスキル</b>
-   <div>${d.リンクスキル}</div>
-   <div>${d.リンクスキル2}</div>
+   <div>${d.リンクスキル || ""}</div>
+   <div>${d.リンクスキル2 || ""}</div>
 
    <b>パッシブ</b>
-   <div>${d.パッシブスキル}</div>
-   <div>${d.パッシブスキル2}</div>
+   <div>${d.パッシブスキル || ""}</div>
+   <div>${d.パッシブスキル2 || ""}</div>
 
    <b>アクティブ</b>
-   <div>${d.アクティブスキル}</div>
-   <div>${d.アクティブスキル2}</div>
+   <div>${d.アクティブスキル || ""}</div>
+   <div>${d.アクティブスキル2 || ""}</div>
 
   </div>
 
