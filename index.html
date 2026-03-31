@@ -7,7 +7,30 @@
 
 <body>
 
-<h1>PhantomDB 起動成功</h1>
+<h1>PhantomDB</h1>
+
+<div id="out">読み込み中...</div>
+
+<script>
+
+fetch("https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1")
+.then(r => r.json())
+.then(data => {
+
+let html = ""
+
+data.slice(0,10).forEach(row=>{
+ html += "<p>"+row.name+"</p>"
+})
+
+document.getElementById("out").innerHTML = html
+
+})
+.catch(e=>{
+ document.getElementById("out").innerText="エラー："+e
+})
+
+</script>
 
 </body>
 </html>
