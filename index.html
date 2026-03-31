@@ -1,87 +1,13 @@
-<script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>phantomDB</title>
+</head>
 
-const API="https://opensheet.elk.sh/1mItxyXuNcRXAj0fFs-uzqHd3eBe9DHQ0-7UKSD7q8asg/Sheet1"
+<body>
 
-let DATA=[]
-let ATTR=""
+<h1>サイトは動いています</h1>
 
-fetch(API)
-.then(r=>r.json())
-.then(d=>{
- DATA=d
- draw()
-})
-
-document.getElementById("search").addEventListener("input",draw)
-
-function setAttr(a){
- ATTR=a
- draw()
-}
-
-function draw(){
-
- const word=document.getElementById("search").value || ""
-
- const list=DATA.filter(d=>{
-
-  const name=d.名前 || ""
-  const link=d.リンクスキル || ""
-  const link2=d.リンクスキル2 || ""
-  const pas=d.パッシブスキル || ""
-  const pas2=d.パッシブスキル2 || ""
-  const act=d.アクティブスキル || ""
-  const act2=d.アクティブスキル2 || ""
-  const attr=d.属性 || ""
-
-  const matchWord =
-   name.includes(word) ||
-   link.includes(word) ||
-   link2.includes(word) ||
-   pas.includes(word) ||
-   pas2.includes(word) ||
-   act.includes(word) ||
-   act2.includes(word)
-
-  const matchAttr =
-   !ATTR || attr.includes(ATTR)
-
-  return matchWord && matchAttr
-
- })
-
- const box=document.getElementById("results")
- box.innerHTML=""
-
- list.forEach(d=>{
-
-  box.innerHTML+=`
-
-  <div class="card">
-
-   <img src="${d.アイコンURL || ""}" style="width:80px">
-
-   <h3>${d.名前}</h3>
-
-   <div>${d.属性}</div>
-
-   <b>リンクスキル</b>
-   <div>${d.リンクスキル || ""}</div>
-   <div>${d.リンクスキル2 || ""}</div>
-
-   <b>パッシブ</b>
-   <div>${d.パッシブスキル || ""}</div>
-   <div>${d.パッシブスキル2 || ""}</div>
-
-   <b>アクティブ</b>
-   <div>${d.アクティブスキル || ""}</div>
-   <div>${d.アクティブスキル2 || ""}</div>
-
-  </div>
-
-  `
- })
-
-}
-
-</script>
+</body>
+</html>
