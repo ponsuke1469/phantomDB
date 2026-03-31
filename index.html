@@ -129,6 +129,7 @@
             font-size: 0.9rem;
             margin-bottom: 12px;
             word-break: break-all;
+            white-space: pre-wrap; /* 改行を維持 */
         }
 
         /* 属性別アクセントカラー */
@@ -173,19 +174,34 @@
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Network response was not ok');
-                allData = await response.json();
+                if (!response.ok) throw new Error('サーバー応答エラー');
                 
-                statusText.textContent = `Total: ${allData.length} characters`;
-                render(allData);
+                const data = await response.json();
+
+                // エラー対策：データが配列（[...]）であることを厳密にチェック
+                if (Array.isArray(data)) {
+                    allData = data;
+                    statusText.textContent = `Total: ${allData.length} 件`;
+                    render(allData);
+                } else {
+                    // 配列でない（エラーメッセージ等が返ってきた）場合
+                    console.error("API Error Object:", data);
+                    statusText.textContent = "エラー：データ形式が正しくありません。スプレッドシートを確認してください。";
+                    resultsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: red;">取得データ異常: ${JSON.stringify(data)}</p>`;
+                }
             } catch (error) {
                 console.error("Fetch error:", error);
-                statusText.textContent = "データの読み込みに失敗しました。スプレッドシートの公開設定を確認してください。";
+                statusText.textContent = "データの読み込みに失敗しました。";
             }
         }
 
         // 描画処理
         function render(data) {
+            if (!data || data.length === 0) {
+                resultsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 20px;">一致するデータがありません</p>';
+                return;
+            }
+
             resultsContainer.innerHTML = data.map(item => `
                 <div class="card ${item.attribute ? 'attr-' + item.attribute : ''}">
                     <div class="card-header">
@@ -201,15 +217,16 @@
                     </div>
                 </div>
             `).join('');
-
-            if (data.length === 0) {
-                resultsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 20px;">一致するデータがありません</p>';
-            }
         }
 
         // リアルタイム検索イベント
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                render(allData);
+                return;
+            }
+            
             const filtered = allData.filter(item => 
                 (item.name && item.name.toLowerCase().includes(query)) ||
                 (item.link_skill && item.link_skill.toLowerCase().includes(query)) ||
