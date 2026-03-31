@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <title>ファンキルリンクスキル検索</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 
 body{
-font-family:sans-serif;
-background:#f5f5f5;
+font-family: Arial, sans-serif;
+background:#f5f6fa;
 margin:0;
 }
 
@@ -17,25 +19,33 @@ background:#2c3e50;
 color:white;
 padding:15px;
 font-size:20px;
+text-align:center;
 }
 
 .container{
-padding:20px;
 max-width:900px;
 margin:auto;
+padding:20px;
 }
 
 input{
 width:100%;
-padding:10px;
+padding:12px;
 font-size:16px;
 margin-bottom:15px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.filters{
+margin-bottom:20px;
 }
 
 .filters button{
-margin:5px;
-padding:8px 12px;
+margin:4px;
+padding:8px 14px;
 border:none;
+border-radius:6px;
 background:#ddd;
 cursor:pointer;
 }
@@ -49,18 +59,24 @@ color:white;
 background:white;
 border-radius:10px;
 padding:15px;
-margin-bottom:10px;
+margin-bottom:12px;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 .name{
 font-weight:bold;
 font-size:18px;
+margin-bottom:6px;
 }
 
 .skill{
-color:#444;
-margin-top:5px;
+color:#333;
+margin-bottom:4px;
+}
+
+.meta{
+font-size:13px;
+color:#666;
 }
 
 </style>
@@ -74,16 +90,18 @@ margin-top:5px;
 
 <div class="container">
 
-<input id="search" placeholder="キャラ名・スキル検索">
+<input id="search" placeholder="キャラ名・リンクスキル検索">
 
 <div class="filters">
-属性:
-<button onclick="filter('火')">火</button>
-<button onclick="filter('水')">水</button>
-<button onclick="filter('風')">風</button>
-<button onclick="filter('光')">光</button>
-<button onclick="filter('闇')">闇</button>
-<button onclick="filter('')">全て</button>
+
+属性  
+<button onclick="filterAttr('火')">火</button>
+<button onclick="filterAttr('水')">水</button>
+<button onclick="filterAttr('風')">風</button>
+<button onclick="filterAttr('光')">光</button>
+<button onclick="filterAttr('闇')">闇</button>
+<button onclick="filterAttr('')">すべて</button>
+
 </div>
 
 <div id="results"></div>
@@ -95,7 +113,7 @@ margin-top:5px;
 const API="https://opensheet.elk.sh/1mItxyXuNcRXAj0FFs-uzrQHd3eBe9DHQ0-7UKSD7q8asg/Sheet1"
 
 let DATA=[]
-let CURRENT=""
+let CURRENT_ATTR=""
 
 fetch(API)
 .then(r=>r.json())
@@ -115,10 +133,10 @@ const el=document.createElement("div")
 el.className="card"
 
 el.innerHTML=`
-<div class="name">${c.キャラ名}</div>
-<div class="skill">${c.リンクスキル}</div>
-<div>${c.条件}</div>
-<div>${c.効果}</div>
+<div class="name">${c.キャラ名 || ""}</div>
+<div class="skill">${c.リンクスキル || ""}</div>
+<div class="meta">${c.条件 || ""}</div>
+<div class="meta">${c.効果 || ""}</div>
 `
 
 box.appendChild(el)
@@ -127,9 +145,9 @@ box.appendChild(el)
 
 }
 
-function filter(attr){
+function filterAttr(attr){
 
-CURRENT=attr
+CURRENT_ATTR=attr
 
 let list=DATA
 
@@ -146,12 +164,14 @@ document.getElementById("search").addEventListener("input",e=>{
 let word=e.target.value
 
 let list=DATA.filter(x=>
-x.キャラ名.includes(word) ||
-x.リンクスキル.includes(word)
+
+(x.キャラ名 && x.キャラ名.includes(word)) ||
+(x.リンクスキル && x.リンクスキル.includes(word))
+
 )
 
-if(CURRENT){
-list=list.filter(x=>x.属性==CURRENT)
+if(CURRENT_ATTR){
+list=list.filter(x=>x.属性==CURRENT_ATTR)
 }
 
 render(list)
